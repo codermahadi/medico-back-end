@@ -1,12 +1,17 @@
-import express, {Application} from 'express';
+import express, {Application, urlencoded} from 'express';
+
 const morgan = require('morgan');
-import { loadControllers } from 'awilix-express';
+import {loadControllers} from 'awilix-express';
 import loadContainer from './container';
 import cors from 'cors';
+
 const compression = require('compression');
 const rateLimit = require("express-rate-limit");
 
 const app: Application = express();
+
+// parse application/x-www-form-urlencoded
+app.use(urlencoded({extended: true}));
 
 // JSON Support
 app.use(express.json());
@@ -34,8 +39,8 @@ loadContainer(app);
 // Controllers
 app.use(loadControllers(
     'controllers/*.ts',
-    { cwd: __dirname }
+    {cwd: __dirname}
 ));
 
 
-export { app };
+export {app};

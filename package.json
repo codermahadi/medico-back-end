@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha -r ts-node/register src/**/**.spec.ts",
     "start": "ts-node ./src/server_medico.ts",
-    "start:dev": "ts-node-dev --respawn --transpileOnly src/server.ts",
-    "pm2": "pm2 start ./src/app.ts --watch",
+    "start:dev": "ts-node-dev --respawn --transpileOnly src/server_medico.ts",
+    "pm2": "pm2 start ./src/server_medico.ts --watch",
     "lint": "eslint src/* --fix"
   },
   "author": "medico",
@@ -38,6 +38,7 @@
     "install": "^0.13.0",
     "joi": "^17.4.2",
     "morgan": "^1.10.0",
-    "swagger-ui-express": "^4.1.6"
+    "swagger-ui-express": "^4.1.6",
+    "uuid": "^8.3.2"
   }
 }
