@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "allowJs": true,
+    "declaration": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "module": "commonjs",
+    "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "target": "es6",
     "moduleResolution": "node",
@@ -9,5 +16,8 @@
     "outDir": "dist",
     "rootDir": "./src"
   },
-  "lib": ["es2015"]
+  "lib": ["es2015", "es2016"],
+  "include": [
+    "src/**/*"
+  ]
 }
