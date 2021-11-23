@@ -6,7 +6,7 @@ const {singUpValidation} = require('../validator/doctor/singupValidation');
 const {loginValidation} = require('../validator/singin');
 
 @route('/doctor')
-export class CheckController {
+export class SingUpController {
     constructor(private readonly singUpService: SingUpService) {}
 
     @route('/singup')
