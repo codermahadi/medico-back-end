@@ -2,6 +2,7 @@ import express = require('express');
 import { createContainer, asClass } from "awilix";
 import { scopePerRequest } from "awilix-express";
 import {TestService} from "./services/repositories/test.service";
+import {SingUpService} from "./services/doctor/SingUp.service";
 
 export default (app: express.Application): void => {
     const container = createContainer({
@@ -23,6 +24,7 @@ export default (app: express.Application): void => {
         // services
         // subscriptionService: asClass(SubscriptionService).scoped(),
         // movementService: asClass(MovementService).scoped(),
+        singUpService: asClass(SingUpService).scoped(),
         testService: asClass(TestService).scoped()
     });
 

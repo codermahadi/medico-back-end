@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
 import { route, POST } from "awilix-express";
 import { v4 as uuidv4 } from 'uuid';
-import {TestService} from "../services/repositories/test.service";
+import {SingUpService} from "../services/doctor/SingUp.service";
 const {singUpValidation} = require('../validator/doctor/singupValidation');
 const {loginValidation} = require('../validator/singin');
 
 @route('/doctor')
 export class CheckController {
-    constructor(private readonly testService: TestService) {
-    }
+    constructor(private readonly singUpService: SingUpService) {}
 
     @route('/singup')
     @POST()
@@ -20,6 +19,7 @@ export class CheckController {
         if (error) {
              res.status(401).json(error.details);
         } else {
+            this.singUpService.create(value).then(r => console.log(45,r)).catch(err => console.log(err));
              res.status(201).json(value);
         }
     }
