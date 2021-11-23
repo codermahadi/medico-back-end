@@ -1,10 +1,15 @@
 import {IWrite} from "../interfaces/IWrite";
 import {IRead} from "../interfaces/IRead";
+import Riak from "basho-riak-client";
+const {riakNodes} = require('../../config');
 
 export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
 
+    public readonly _riakClient: any;
     constructor() {
-        console.log("base repository running...");
+        this._riakClient = new Riak.Client([riakNodes], function (err, c) {
+            console.log("Rick Client running...");
+        })
     }
 
     create(item: T): Promise<boolean> {
@@ -21,7 +26,7 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
 
     }
 
-    findOne(item: T): Promise<T> {
+    findOne(id: T): Promise<T> {
         throw new Error('Method not implemented')
 
     }

@@ -16,3 +16,8 @@ export enum SingUpGateway {
     ADMIN_PANEL = 'adminPanel',
     VAS = 'vas'
 }
+
+export enum Bucket {
+    DOCTORS = 'doctors',
+    PATIENTS = 'patients'
+}

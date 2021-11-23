@@ -14,12 +14,13 @@ export class SingUpController {
     public singUp(req: Request, res: Response): void {
         const {body} = req;
         const keyId = uuidv4();
-
+        //for validation
         const {error, value} = singUpValidation(body);
         if (error) {
              res.status(401).json(error.details);
         } else {
-            this.singUpService.create(value).then(r => console.log(45,r)).catch(err => console.log(err));
+            value.id = keyId;
+           this.singUpService.create(value).then(r => console.log(45,r)).catch(err => console.log(err));
              res.status(201).json(value);
         }
     }
