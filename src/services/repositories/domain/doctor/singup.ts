@@ -12,4 +12,6 @@ export interface SingUp {
     xmppId?: string;
     xmppStatus: activeStatus,
     manualStatus: activeStatus,
+    createAt?: string,
+    updatedAt?: string
 }

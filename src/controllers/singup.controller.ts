@@ -4,6 +4,7 @@ import {v4 as uuidv4} from 'uuid';
 import {SingUpService} from "../services/doctor/SingUp.service";
 import {hashPassword} from "../common/utils/passwordHash.utils";
 import {activeStatus, Channel} from "../common/enums";
+import moment from "moment";
 
 const {singUpValidation} = require('../validator/doctor/singupValidation');
 const {loginValidation} = require('../validator/singin');
@@ -23,22 +24,25 @@ export class SingUpController {
         if (error) {
             res.status(401).json(error.details);
         } else {
+
+            // added some additional data
             value.id = keyId;
-            value.password = hashPassword(value.password);
+            value.password = hashPassword(value.password); // password made HAS256
             value.iosDeviceId = 'no';
             value.androidDeviceId = 'no';
             value.xmppId = 'no';
             value.xmppStatus = activeStatus.OFFLINE
+            value.createAt = moment().format();
+            value.updatedAt = moment().format();
 
             //Data Submit here
-            this.singUpService.create(value)
-                .then(r =>
-                    r ? res.status(201).json({
-                            isSuccess: true,
-                            message: 'Doctor sing up success'
-                        }) :
-                        res.status(401).json({isSuccess: false, message: 'Doctor sing up failed'}))
-                .catch(err => res.status(400).json({isSuccess: false, message: err}));
+            this.singUpService.create(value, (x) => {
+                if (x && !x.isSuccess) {
+                    res.status(401).json({isSuccess: false, message: x.message})
+                } else if (x && x.isSuccess) {
+                    res.status(201).json({isSuccess: true, message: x.message})
+                }
+            }).then(r => r).catch(err => res.status(400).json({isSuccess: false, message: err}));
         }
     }
 

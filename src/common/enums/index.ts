@@ -17,7 +17,8 @@ export enum SingUpGateway {
     VAS = 'vas'
 }
 
-export enum Bucket {
+export enum Buckets {
+    COMMON_BUCKET = 'commonBucket',
     DOCTORS = 'doctors',
     PATIENTS = 'patients'
 }

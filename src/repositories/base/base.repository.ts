@@ -7,13 +7,17 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
 
     public readonly _riakClient: any;
     constructor() {
-        this._riakClient = new Riak.Client([riakNodes], function (err, c) {
-            console.log("Rick Client running...");
-        })
+        // this._riakClient = new Riak.Client([riakNodes], function (err, c) {
+        //     console.log("Rick Client running...");
+        // })
+        //initiate Riak Object
+        let node = new Riak.Node({remoteAddress: '127.0.0.1', remotePort: 8087});
+        let cluster = new Riak.Cluster({nodes: [node]});
+        this._riakClient = new Riak.Client(cluster);
     }
 
-    create(item: T): Promise<boolean> {
-        return Promise.resolve(false);
+    create(item: T, callback): void {
+
     }
 
     delete(id: string): Promise<boolean> {

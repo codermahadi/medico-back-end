@@ -1,40 +1,49 @@
+const logger = require('winston');
 import {SingUp} from "../repositories/domain/doctor/singup";
 import {BaseRepository} from "../../repositories/base/base.repository";
-import {Bucket} from "../../common/enums";
+import {get, indexQuery, save} from "../../common/utils/riak.utils";
+import {Buckets} from "../../common/enums";
 
 export class SingUpService extends BaseRepository<SingUp> {
-     async create(item: SingUp): Promise<boolean> {
+    async create(item: SingUp, callback) {
 
-         let res: boolean = true;
-          await this._riakClient.storeValue({
-             bucket: Bucket.DOCTORS,
-             key: item.id,
-             value: item
-         }, await function (err, result) {
-             console.log(result);
-             res = !err;
-         });
+        await get(this._riakClient, item.phoneNumber, Buckets.COMMON_BUCKET, function (uuid) {
+            if (uuid) {
+                callback({
+                    isSuccess: false,
+                    message: 'Doctor already registered',
+                    item: {}
+                });
+            } else {
+                //Insert data in common bucket
+                save(this._riakClient, item.phoneNumber, Buckets.COMMON_BUCKET, {uuid: item.id}, 'uuid_int', function (data) {
+                    if (data) {
+                        //Insert data in doctor bucket
+                        save(this._riakClient, item.id, Buckets.DOCTORS, item, 'uuid_int', function (data) {
+                            if (data) {
 
-          return res;
+                                callback({
+                                    isSuccess: true,
+                                    message: 'Doctor successfully registered',
+                                    item: {}
+                                });
+                            }
 
+                        });
+                    }
+                });
+            }
+        });
 
+        // indexQuery(this._riakClient, Buckets.COMMON_BUCKET, 'uuid_int', callback);
+        // if (res){
+        //    await save(this._riakClient, item.id, Buckets.DOCTORS, item)
+        // }
 
-        // this._riakClient.fetchValue({
-        //     bucket: Bucket.DOCTORS,
-        //     key: 'ca6613a8-683f-4d0e-a080-6413f8e24eef',
-        //     convertToJs: true
-        // }, function (err, result){
+        // this._riakClient.secondaryIndexQuery({ bucket: Buckets.COMMON_BUCKET, indexName: 'id', indexKey: 9000 }, function (err, rslt) {
         //
-        //     if (err){
-        //         throw new Error(err)
-        //     }else {
-        //         let riakObj = result.values.shift();
-        //         let bashoMan = riakObj.value;
-        //         console.log(bashoMan);
-        //     }
-        // });
-
-
+        //     console.log(err, rslt);
+        // })
 
     }
 
