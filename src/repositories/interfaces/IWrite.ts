@@ -1,5 +1,5 @@
 export interface IWrite<T> {
-    create(item: T, callback): void;
+    create(item: T): Promise<boolean>;
 
     update(id: string, item: T): Promise<boolean>;
 

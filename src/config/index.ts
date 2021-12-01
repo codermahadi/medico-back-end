@@ -5,4 +5,5 @@ module.exports = {
     masterKey: process.env.API_KEY,
     port: process.env.PORT,
     riakNodes: process.env.RIAK_NODES,
+    couchDbUrl: process.env.COUCHDB
 };

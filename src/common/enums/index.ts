@@ -22,3 +22,8 @@ export enum Buckets {
     DOCTORS = 'doctors',
     PATIENTS = 'patients'
 }
+
+export enum tables {
+    DOCTORS = 'doctors',
+    PATIENTS = 'patients'
+}

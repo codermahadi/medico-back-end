@@ -1,9 +1,9 @@
-import {Doctor} from "../../common/interfaces/Doctor";
+import {iDoctor} from "../../common/interfaces/iDoctor";
 import {Channel} from "../../common/enums";
 
 const Joi = require('joi');
 
-const singUpValidation = (body: Doctor) => {
+const singUpValidation = (body: iDoctor) => {
     const schemaRules = {
         name: Joi.string().min(1).max(20).empty('').required(),
         email: Joi.string().required().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),

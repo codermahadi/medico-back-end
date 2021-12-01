@@ -1,66 +1,73 @@
+import {iDoctor} from "../../common/interfaces/iDoctor";
+
 const logger = require('winston');
-import {SingUp} from "../repositories/domain/doctor/singup";
 import {BaseRepository} from "../../repositories/base/base.repository";
-import {get, indexQuery, save} from "../../common/utils/riak.utils";
-import {Buckets} from "../../common/enums";
+import {tables} from "../../common/enums";
+import {Doctor} from "../../models/doctor/Doctor";
+import {checkError} from "../../common/utils/checkError";
+import {throws} from "assert";
 
-export class SingUpService extends BaseRepository<SingUp> {
-    async create(item: SingUp, callback) {
+export class SingUpService extends BaseRepository<iDoctor> {
+    private readonly db: any;
 
-        await get(this._riakClient, item.phoneNumber, Buckets.COMMON_BUCKET, function (uuid) {
-            if (uuid) {
-                callback({
-                    isSuccess: false,
-                    message: 'Doctor already registered',
-                    item: {}
-                });
-            } else {
-                //Insert data in common bucket
-                save(this._riakClient, item.phoneNumber, Buckets.COMMON_BUCKET, {uuid: item.id}, 'uuid_int', function (data) {
-                    if (data) {
-                        //Insert data in doctor bucket
-                        save(this._riakClient, item.id, Buckets.DOCTORS, item, 'uuid_int', function (data) {
-                            if (data) {
+    constructor() {
+        super();
+        this.db = this._couchdb.use(tables.DOCTORS);
+    }
 
-                                callback({
-                                    isSuccess: true,
-                                    message: 'Doctor successfully registered',
-                                    item: {}
-                                });
-                            }
+    async create(item: iDoctor): Promise<boolean> {
+        let doctor: iDoctor = new Doctor(item.androidDeviceId, item.channel, item.email, item.uuid, item.image, item.iosDeviceId, item.manualStatus, item.name, item.password, item.phoneNumber, item.xmppId, item.xmppStatus, item.createAt, item.updatedAt)
 
-                        });
-                    }
-                });
-            }
-        });
+        let q = {
+            selector: {"phoneNumber": item.phoneNumber},
+            use_index: `_design/${tables.DOCTORS}`,
+        }
+        const find = await this.db.find(q);
 
-        // indexQuery(this._riakClient, Buckets.COMMON_BUCKET, 'uuid_int', callback);
-        // if (res){
-        //    await save(this._riakClient, item.id, Buckets.DOCTORS, item)
-        // }
+        // Check User Exists or not
+        if (find.docs.length < 1) {
+            // data insert here
+            await this.db.insert(doctor).then(r => {
+                doctor.processAPIResponse(r);
+                logger.info(doctor);
+            }).catch(e => checkError(e));
 
-        // this._riakClient.secondaryIndexQuery({ bucket: Buckets.COMMON_BUCKET, indexName: 'id', indexKey: 9000 }, function (err, rslt) {
-        //
-        //     console.log(err, rslt);
-        // })
+            //indexing here
+            await this.db.createIndex({
+                index: {
+                    fields: ['email', 'phoneNumber', 'uuid', 'channel']
+                },
+                ddoc: tables.DOCTORS
+            });
+        } else {
+            throw new Error("User Already exists!");
+        }
 
+
+        return !!doctor._id;
     }
 
     delete(id: string): Promise<boolean> {
         return Promise.resolve(false);
     }
 
-    find(item: SingUp): Promise<SingUp[]> {
+    find(item: iDoctor): Promise<iDoctor[]> {
         return Promise.resolve([]);
     }
 
-    findOne(item: SingUp): Promise<SingUp> {
+    async findOne(item: iDoctor): Promise<iDoctor> {
 
-        return Promise.resolve(undefined);
+        let q = {
+            selector: {"phoneNumber": item.phoneNumber},
+            use_index: `_design/${tables.DOCTORS}`,
+        }
+
+        const find = await this.db.find(q);
+        console.log(find.docs.length)
+        return find.docs.length > 0 ? find.docs[0] : null;
     }
 
-    update(id: string, item: SingUp): Promise<boolean> {
+    update(id: string, item: iDoctor): Promise<boolean> {
         return Promise.resolve(false);
     }
 
