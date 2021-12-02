@@ -55,7 +55,17 @@ export class SingUpController extends BaseController {
         if (error) {
             res.status(401).json(error.details);
         } else {
-            res.status(201).json(value);
+            value.password = hashPassword(value.password); // password made HAS256
+            this.singUpService.login(value)
+                .then(r => {
+                    //remove password property
+                    delete r.password;
+                    res.status(201).json(r)
+                })
+                .catch(e => res.status(422).json({
+                    isSuccess: false,
+                    message: e.message
+                }));
         }
     }
 }

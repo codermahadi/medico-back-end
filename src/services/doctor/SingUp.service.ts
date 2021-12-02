@@ -47,6 +47,19 @@ export class SingUpService extends BaseRepository<iDoctor> {
         return !!doctor._id;
     }
 
+    async login(item: any): Promise<iDoctor> {
+
+        let q = {
+            selector: {"phoneNumber": item.phoneNumber, "password": item.password},
+            use_index: `_design/${tables.DOCTORS}`,
+        }
+        let find = await this.db.find(q);
+        if (find.docs.length < 1) {
+            throw new Error("Phone number or password invalid");
+        }
+        return find.docs[0];
+    }
+
     delete(id: string): Promise<boolean> {
         return Promise.resolve(false);
     }
