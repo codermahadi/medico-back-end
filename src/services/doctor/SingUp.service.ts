@@ -5,7 +5,6 @@ import {BaseRepository} from "../../repositories/base/base.repository";
 import {tables} from "../../common/enums";
 import {Doctor} from "../../models/doctor/Doctor";
 import {checkError} from "../../common/utils/checkError";
-import {throws} from "assert";
 
 export class SingUpService extends BaseRepository<iDoctor> {
     private readonly db: any;

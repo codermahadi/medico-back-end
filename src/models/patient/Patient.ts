@@ -1,8 +1,8 @@
 import * as Nano from 'nano'
-import {iDoctor} from "../../common/interfaces/iDoctor";
 import {activeStatus, Channel} from "../../common/enums";
+import {iPatient} from "../../common/interfaces/iPatient";
 
-export class Doctor implements iDoctor {
+export class Patient implements iPatient {
     _id: string;
     _rev: string;
     androidDeviceId: string;
